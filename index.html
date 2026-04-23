@@ -1,112 +1,106 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>日本購物計算機 V4</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>日本購物小幫手</title>
 
-<style>
-/* 基礎設定 */
-body { 
-    font-family: "Microsoft JhengHei", Arial; 
-    background:#e9ecef; 
-    margin: 0; 
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    <meta name="apple-mobile-web-app-title" content="日本購物幫手">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon.png">
+    <style>
+        body { 
+            font-family: "Microsoft JhengHei", Arial; 
+            background:#e9ecef; 
+            margin: 0; 
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.box { 
-    background: white; 
-    padding: 12px; 
-    border-radius: 16px; 
-    width: 100%;
-    max-width: 380px; 
-    box-sizing: border-box;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
-}
+        .box { 
+            background: white; 
+            padding: 12px; 
+            border-radius: 16px; 
+            width: 100%;
+            max-width: 380px; 
+            box-sizing: border-box;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
+        }
 
-/* 第一頁重點區：計算機與匯率 */
-h2 { margin: 5px 0; font-size: 20px; color: #333; }
+        h2 { margin: 5px 0; font-size: 20px; color: #333; }
 
-.init-btn {
-    font-size: 13px; background: #6c757d; color: white; 
-    padding: 4px 12px; border-radius: 20px; border: none; margin-bottom: 8px;
-}
+        .init-btn {
+            font-size: 13px; background: #6c757d; color: white; 
+            padding: 6px 15px; border-radius: 20px; border: none; margin-bottom: 10px;
+            cursor: pointer;
+        }
 
-.rate-box { 
-    margin-bottom: 8px; font-size: 16px; background: #f8f9fa; 
-    padding: 8px; border-radius: 8px;
-}
-.rate-box input { 
-    font-size: 18px; width: 65px; text-align: center; 
-    border: 2px solid #007bff; border-radius: 5px; font-weight: bold;
-}
+        .rate-box { 
+            margin-bottom: 8px; font-size: 16px; background: #f8f9fa; 
+            padding: 8px; border-radius: 8px;
+        }
+        .rate-box input { 
+            font-size: 18px; width: 65px; text-align: center; 
+            border: 2px solid #007bff; border-radius: 5px; font-weight: bold;
+        }
 
-.display { font-size: 28px; padding: 10px; background: #f1f3f5; border-radius: 8px; margin-bottom: 5px; }
-.result { 
-    font-size: 32px; font-weight: bold; color: #ffd700; 
-    background: #212529; padding: 12px; border-radius: 10px; margin-bottom: 10px;
-}
+        .display { font-size: 28px; padding: 10px; background: #f1f3f5; border-radius: 8px; margin-bottom: 5px; }
+        .result { 
+            font-size: 32px; font-weight: bold; color: #ffd700; 
+            background: #212529; padding: 12px; border-radius: 10px; margin-bottom: 10px;
+        }
 
-/* 快捷按鈕區 - 加回 +10000 並優化排列 */
-.top-btns { display: flex; gap: 4px; margin-bottom: 8px; }
-.top-btns button { 
-    flex: 1; 
-    padding: 10px 0; 
-    font-size: 14px; /* 稍微縮小字體以確保四個按鈕放得下 */
-    background: #007bff; 
-    color: white; 
-    border: none; 
-    border-radius: 8px; 
-    font-weight: bold; 
-}
+        .top-btns { display: flex; gap: 4px; margin-bottom: 8px; }
+        .top-btns button { 
+            flex: 1; padding: 10px 0; font-size: 14px; 
+            background: #007bff; color: white; border: none; border-radius: 8px; font-weight: bold; 
+        }
 
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.grid button { 
-    padding: 15px 0; font-size: 22px; border: none; border-radius: 10px; 
-    background: #f8f9fa; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-.grid button.reset { background: #dc3545; color: white; }
-.grid button.del { background: #adb5bd; color: white; }
-.grid button:active { background: #dee2e6; transform: translateY(2px); }
+        .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+        .grid button { 
+            padding: 15px 0; font-size: 22px; border: none; border-radius: 10px; 
+            background: #f8f9fa; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .grid button.reset { background: #dc3545; color: white; }
+        .grid button.del { background: #adb5bd; color: white; }
 
-/* 下方區域：話術（可滑動） */
-.talk-area {
-    margin-top: 15px; 
-    padding-top: 15px;
-    border-top: 2px dashed #dee2e6;
-}
+        .talk-area {
+            margin-top: 15px; padding-top: 15px;
+            border-top: 2px dashed #dee2e6;
+        }
 
-.talkText { 
-    font-size: 24px; min-height: 35px; margin-bottom: 15px; 
-    color: #495057; line-height: 1.2; font-weight: bold;
-}
+        .talkText { 
+            font-size: 24px; min-height: 35px; margin-bottom: 15px; 
+            color: #495057; line-height: 1.2; font-weight: bold;
+        }
 
-/* 變色動畫效果 */
-.active-text { 
-    color: #007bff !important; 
-    animation: flash 0.4s ease; 
-}
-@keyframes flash {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-}
+        .active-text { 
+            color: #007bff !important; 
+            animation: flash 0.4s ease; 
+        }
+        @keyframes flash {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
-.qtyGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 12px; }
-.qtyBtn { padding: 10px 0; font-size: 18px; background: #e9ecef; border: none; border-radius: 8px; }
-.qtyBtn.active { background: #28a745; color: white; font-weight: bold; }
+        .qtyGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 12px; }
+        .qtyBtn { padding: 10px 0; font-size: 18px; background: #e9ecef; border: none; border-radius: 8px; }
+        .qtyBtn.active { background: #28a745; color: white; font-weight: bold; }
 
-.phraseGrid { display: grid; grid-template-columns: 1fr; gap: 8px; }
-.phraseBtn { 
-    padding: 15px; font-size: 18px; background: #fd7e14; color: white; 
-    border: none; border-radius: 10px; text-align: left;
-}
+        .phraseGrid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .phraseBtn { 
+            padding: 15px; font-size: 18px; background: #fd7e14; color: white; 
+            border: none; border-radius: 10px; text-align: left;
+        }
 
-.numHighlight { color: #28a745; font-size: 30px; }
-</style>
+        .numHighlight { color: #28a745; font-size: 30px; }
+    </style>
 </head>
 
 <body>
@@ -114,7 +108,7 @@ h2 { margin: 5px 0; font-size: 20px; color: #333; }
 <div class="box">
     <button class="init-btn" onclick="initVoice()">🔊 測試語音 (沒聲音點我)</button>
     
-    <h2>💱 換算 x 購物</h2>
+    <h2>💱 日本購物幫手</h2>
 
     <div class="rate-box">
         匯率：<input type="number" id="rateInput" value="0.21" step="0.001" oninput="update()">
@@ -204,6 +198,7 @@ function del(){
     update();
 }
 
+// 語音核心函數
 function speak(text){
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
@@ -216,8 +211,8 @@ function speak(text){
 }
 
 function initVoice() {
-    speak("準備完了");
-    alert("語音已啟動！");
+    speak("こんにちは");
+    alert("語音測試成功！");
 }
 
 function triggerHighlight() {
