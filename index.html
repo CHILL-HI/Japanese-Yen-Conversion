@@ -2,239 +2,247 @@
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>日幣換算＋語音購物話術</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>日本購物計算機 V4</title>
 
 <style>
-body{
-  font-family: Arial;
-  background:#f4f4f4;
-  text-align:center;
-  padding:10px;
+/* 基礎設定 */
+body { 
+    font-family: "Microsoft JhengHei", Arial; 
+    background:#e9ecef; 
+    margin: 0; 
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.box{
-  background:white;
-  padding:15px;
-  border-radius:12px;
-  max-width:340px;
-  margin:auto;
-  box-shadow:0 2px 10px rgba(0,0,0,0.1);
+.box { 
+    background: white; 
+    padding: 12px; 
+    border-radius: 16px; 
+    width: 100%;
+    max-width: 380px; 
+    box-sizing: border-box;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1); 
 }
 
-.display{
-  font-size:26px;
-  margin:8px;
-  padding:10px;
-  background:#eee;
-  border-radius:10px;
+/* 第一頁重點區：計算機與匯率 */
+h2 { margin: 5px 0; font-size: 20px; color: #333; }
+
+.init-btn {
+    font-size: 13px; background: #6c757d; color: white; 
+    padding: 4px 12px; border-radius: 20px; border: none; margin-bottom: 8px;
 }
 
-.result{
-  font-size:30px;
-  margin:10px 0;
-  font-weight:bold;
-  color:#FFD700;
-  background:#000;
-  padding:10px;
-  border-radius:10px;
+.rate-box { 
+    margin-bottom: 8px; font-size: 16px; background: #f8f9fa; 
+    padding: 8px; border-radius: 8px;
+}
+.rate-box input { 
+    font-size: 18px; width: 65px; text-align: center; 
+    border: 2px solid #007bff; border-radius: 5px; font-weight: bold;
 }
 
-/* 快捷鍵 */
-.top-btns button{
-  margin:3px;
-  padding:10px 12px;
-  font-size:18px;
+.display { font-size: 28px; padding: 10px; background: #f1f3f5; border-radius: 8px; margin-bottom: 5px; }
+.result { 
+    font-size: 32px; font-weight: bold; color: #ffd700; 
+    background: #212529; padding: 12px; border-radius: 10px; margin-bottom: 10px;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:8px;
-  margin-top:10px;
+/* 快捷按鈕區 - 加回 +10000 並優化排列 */
+.top-btns { display: flex; gap: 4px; margin-bottom: 8px; }
+.top-btns button { 
+    flex: 1; 
+    padding: 10px 0; 
+    font-size: 14px; /* 稍微縮小字體以確保四個按鈕放得下 */
+    background: #007bff; 
+    color: white; 
+    border: none; 
+    border-radius: 8px; 
+    font-weight: bold; 
 }
 
-button{
-  padding:10px;
-  font-size:20px;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.grid button { 
+    padding: 15px 0; font-size: 22px; border: none; border-radius: 10px; 
+    background: #f8f9fa; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.grid button.reset { background: #dc3545; color: white; }
+.grid button.del { background: #adb5bd; color: white; }
+.grid button:active { background: #dee2e6; transform: translateY(2px); }
+
+/* 下方區域：話術（可滑動） */
+.talk-area {
+    margin-top: 15px; 
+    padding-top: 15px;
+    border-top: 2px dashed #dee2e6;
 }
 
-.num{ background:#f0f0f0; }
-.plus{ background:#1e88e5; color:white; }
-.reset{ background:#e53935; color:white; }
-.del{ background:#ddd; color:black; }
-
-/* 購物話術區 */
-.talk{
-  margin-top:15px;
-  padding:12px;
-  background:#f9f9f9;
-  border-radius:10px;
+.talkText { 
+    font-size: 24px; min-height: 35px; margin-bottom: 15px; 
+    color: #495057; line-height: 1.2; font-weight: bold;
 }
 
-.talkText{
-  font-size:20px;
-  margin:10px 0;
+/* 變色動畫效果 */
+.active-text { 
+    color: #007bff !important; 
+    animation: flash 0.4s ease; 
+}
+@keyframes flash {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 
-/* 1~10 按鈕 */
-.qtyGrid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:6px;
+.qtyGrid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 12px; }
+.qtyBtn { padding: 10px 0; font-size: 18px; background: #e9ecef; border: none; border-radius: 8px; }
+.qtyBtn.active { background: #28a745; color: white; font-weight: bold; }
+
+.phraseGrid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+.phraseBtn { 
+    padding: 15px; font-size: 18px; background: #fd7e14; color: white; 
+    border: none; border-radius: 10px; text-align: left;
 }
 
-.qtyBtn{
-  font-size:18px;
-  padding:8px;
-  background:#c0c0c0;
-  border-radius:8px;
-}
-
-/* 🎨 選取後變色 */
-.qtyBtn.active{
-  background:#4CAF50;
-  color:white;
-  font-weight:bold;
-}
-
-/* 話術中數字變色 */
-.numHighlight{
-  color:#4CAF50;
-  font-weight:bold;
-  font-size:22px;
-}
+.numHighlight { color: #28a745; font-size: 30px; }
 </style>
 </head>
 
 <body>
 
 <div class="box">
+    <button class="init-btn" onclick="initVoice()">🔊 測試語音 (沒聲音點我)</button>
+    
+    <h2>💱 換算 x 購物</h2>
 
-<h2>💱 日幣換算</h2>
+    <div class="rate-box">
+        匯率：<input type="number" id="rateInput" value="0.21" step="0.001" oninput="update()">
+    </div>
 
-<div class="display" id="input">0</div>
-<div class="result" id="result">≈ 0 台幣</div>
+    <div class="display">¥ <span id="input">0</span></div>
+    <div class="result" id="result">≈ 0 台幣</div>
 
-<div class="top-btns">
-  <button class="plus" onclick="addFast(100)">+100</button>
-  <button class="plus" onclick="addFast(500)">+500</button>
-  <button class="plus" onclick="addFast(1000)">+1000</button>
-  <button class="plus" onclick="addFast(10000)">+10000</button>
-</div>
+    <div class="top-btns">
+        <button onclick="addFast(100)">+100</button>
+        <button onclick="addFast(1000)">+1000</button>
+        <button onclick="addFast(5000)">+5000</button>
+        <button onclick="addFast(10000)">+1萬</button>
+    </div>
 
-<div class="grid">
-  <button class="num" onclick="press(1)">1</button>
-  <button class="num" onclick="press(2)">2</button>
-  <button class="num" onclick="press(3)">3</button>
+    <div class="grid">
+        <button onclick="press(1)">1</button>
+        <button onclick="press(2)">2</button>
+        <button onclick="press(3)">3</button>
+        <button onclick="press(4)">4</button>
+        <button onclick="press(5)">5</button>
+        <button onclick="press(6)">6</button>
+        <button onclick="press(7)">7</button>
+        <button onclick="press(8)">8</button>
+        <button onclick="press(9)">9</button>
+        <button class="reset" onclick="resetAll()">歸零</button>
+        <button onclick="press(0)">0</button>
+        <button class="del" onclick="del()">←</button>
+    </div>
 
-  <button class="num" onclick="press(4)">4</button>
-  <button class="num" onclick="press(5)">5</button>
-  <button class="num" onclick="press(6)">6</button>
+    <div class="talk-area">
+        <div class="talkText" id="jpText">選擇數量或對話</div>
 
-  <button class="num" onclick="press(7)">7</button>
-  <button class="num" onclick="press(8)">8</button>
-  <button class="num" onclick="press(9)">9</button>
+        <div class="qtyGrid">
+            <button class="qtyBtn" onclick="setQty(this,1)">1</button>
+            <button class="qtyBtn" onclick="setQty(this,2)">2</button>
+            <button class="qtyBtn" onclick="setQty(this,3)">3</button>
+            <button class="qtyBtn" onclick="setQty(this,4)">4</button>
+            <button class="qtyBtn" onclick="setQty(this,5)">5</button>
+            <button class="qtyBtn" onclick="setQty(this,6)">6</button>
+            <button class="qtyBtn" onclick="setQty(this,7)">7</button>
+            <button class="qtyBtn" onclick="setQty(this,8)">8</button>
+            <button class="qtyBtn" onclick="setQty(this,9)">9</button>
+            <button class="qtyBtn" onclick="setQty(this,10)">10</button>
+        </div>
 
-  <button class="reset" onclick="resetAll()">歸零</button>
-  <button class="num" onclick="press(0)">0</button>
-  <button class="del" onclick="del()">刪除</button>
-</div>
-
-<div class="talk">
-
-<h3>🗣️ 購物話術（按一次語音唸出）</h3>
-
-<div class="talkText" id="jpText">
-  <span class="numHighlight">1</span>個、お願いします。ありがとうございます。
-</div>
-
-<div class="qtyGrid">
-  <button class="qtyBtn active" onclick="setQty(this,1)">1</button>
-  <button class="qtyBtn" onclick="setQty(this,2)">2</button>
-  <button class="qtyBtn" onclick="setQty(this,3)">3</button>
-  <button class="qtyBtn" onclick="setQty(this,4)">4</button>
-  <button class="qtyBtn" onclick="setQty(this,5)">5</button>
-  <button class="qtyBtn" onclick="setQty(this,6)">6</button>
-  <button class="qtyBtn" onclick="setQty(this,7)">7</button>
-  <button class="qtyBtn" onclick="setQty(this,8)">8</button>
-  <button class="qtyBtn" onclick="setQty(this,9)">9</button>
-  <button class="qtyBtn" onclick="setQty(this,10)">10</button>
-</div>
-
-</div>
-
+        <div class="phraseGrid">
+            <button class="phraseBtn" onclick="speakPhrase('いくらですか？', this)">💰 請問多少錢？</button>
+            <button class="phraseBtn" onclick="speakPhrase('免税できますか？', this)">🛍️ 請問可以免稅嗎？</button>
+            <button class="phraseBtn" onclick="speakPhrase('クレジットカードは使えますか？', this)">💳 可以刷信用卡嗎？</button>
+        </div>
+    </div>
 </div>
 
 <script>
-
-// 📌 日幣換算
-let value="";
-const rate = 0.21;
+let value = "";
 
 function update(){
-  if(value === "") value="0";
-  let jpy = parseInt(value);
-  let twd = jpy * rate;
-  document.getElementById("input").innerText = jpy;
-  document.getElementById("result").innerText = "≈ "+Math.round(twd)+" 台幣";
+    if(value === "") value = "0";
+    if(value.length > 8) value = value.slice(0, 8);
+    let jpy = parseInt(value);
+    let rate = parseFloat(document.getElementById("rateInput").value) || 0;
+    let twd = jpy * rate;
+    document.getElementById("input").innerText = jpy.toLocaleString();
+    document.getElementById("result").innerText = "≈ " + Math.round(twd).toLocaleString() + " 台幣";
 }
 
 function press(n){
-  if(value==="0") value="";
-  value+=n;
-  update();
+    if(value === "0") value = "";
+    value += n;
+    update();
 }
 
 function addFast(n){
-  value=(parseInt(value||0)+n).toString();
-  update();
+    value = (parseInt(value || 0) + n).toString();
+    update();
 }
 
 function resetAll(){
-  value="";
-  update();
+    value = "";
+    update();
 }
 
 function del(){
-  value=value.slice(0,-1);
-  if(value==="") value="0";
-  update();
+    value = value.slice(0, -1);
+    if(value === "") value = "0";
+    update();
 }
 
-// 📣 日文語音唸出
 function speak(text){
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = "ja-JP"; // 設定為日語發音
-  speechSynthesis.cancel(); // 停止之前語音
-  speechSynthesis.speak(utter);
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    setTimeout(() => {
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "ja-JP";
+        utter.rate = 0.85; 
+        window.speechSynthesis.speak(utter);
+    }, 50);
 }
 
-/* 🗣️ 設定數量 + 語音 */
+function initVoice() {
+    speak("準備完了");
+    alert("語音已啟動！");
+}
+
+function triggerHighlight() {
+    const el = document.getElementById("jpText");
+    el.classList.remove("active-text");
+    void el.offsetWidth; 
+    el.classList.add("active-text");
+}
+
 function setQty(btn, n){
+    document.querySelectorAll(".qtyBtn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    let jp = n + "個、お願いします。";
+    document.getElementById("jpText").innerHTML = `<span class="numHighlight">${n}</span>個、お願いします。`;
+    triggerHighlight();
+    speak(jp);
+}
 
-  // 🔹 按鈕顏色顯示
-  document.querySelectorAll(".qtyBtn").forEach(b=>{
-    b.classList.remove("active");
-  });
-  btn.classList.add("active");
-
-  // 刪除了原本會報錯的 document.getElementById("qtyNum").innerText = n;
-
-  let sentence = `${n}個お願いします。ありがとうございます。`;
-
-  // 🔹 直接更新整段 HTML 即可
-  document.getElementById("jpText").innerHTML =
-    `<span class="numHighlight">${n}</span>個、お願いします。ありがとうございます。`;
-
-  speak(sentence);
+function speakPhrase(jp, btn) {
+    document.getElementById("jpText").innerText = jp;
+    triggerHighlight();
+    speak(jp);
 }
 
 update();
-
 </script>
 
 </body>
